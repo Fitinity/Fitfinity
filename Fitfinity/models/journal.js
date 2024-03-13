@@ -13,6 +13,11 @@ const imageSchema = new Schema({
 });
 
 const journalEntrySchema = new mongoose.Schema({
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User", // Reference to the User model
+    required: true,
+  },
   title: {
     type: String,
     required: true,
