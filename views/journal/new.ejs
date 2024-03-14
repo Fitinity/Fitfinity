@@ -1,0 +1,70 @@
+<div class="row">
+  <h1 class="text-center">New entry</h1>
+  <!--offset-3 is one of the way of centering everything -->
+  <div class="col-6 offset-3">
+    <form
+      action="/journal/new"
+      method="POST"
+      novalidate
+      class="needs-validation"
+      enctype="multipart/form-data"
+    >
+      <div class="mb-3">
+        <label for="title" class="form-label fs-2">Title</label>
+        <input
+          type="text"
+          class="form-control"
+          id="title"
+          name="title"
+          required
+        />
+        <div class="valid-feedback">Looks Good</div>
+      </div>
+
+      <%# Inorder to parse the file submissions into req.body we use multer
+      middleware which we install by npm i multer The function of multer is to
+      parse the file upload into req,body %>
+      <label for="image" class="form-label fs-2 mb-3">Upload Images</label>
+
+      <div class="input-group mb-3">
+        <input
+          type="file"
+          class="form-control"
+          id="image"
+          name="image"
+          multiple
+        />
+      </div>
+
+      <%#
+      <div class="mb-3">
+        <label class="form-label fs-2" for="image">Image Url</label>
+        <input
+          class="form-control"
+          type="text"
+          type="text"
+          id="image"
+          name="image"
+          required
+        />
+        <div class="valid-feedback">Looks Good</div>
+      </div>
+      %>
+      <div class="mb-3">
+        <label class="form-label fs-2" for="description">Content</label>
+        <textarea
+          name="description"
+          id="description"
+          type="text"
+          class="form-control"
+          required
+        ></textarea>
+        <div class="valid-feedback">Looks Good</div>
+      </div>
+
+      <div class="mb-3">
+        <button class="btn btn-success">Add Entry</button>
+      </div>
+    </form>
+  </div>
+</div>
