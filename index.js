@@ -1,11 +1,12 @@
 const express = require("express");
+const ejsMate = require('ejs-mate')
 require("dotenv").config();
 
 const mongoose = require("mongoose");
 const { JournalEntry } = require("./models/journal");
 const session = require("express-session");
 const methodOverride = require("method-override");
-const ejsMate = require("ejs-mate");
+
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/fitfinity")
@@ -27,6 +28,7 @@ const app = express();
 const flash = require("connect-flash");
 const path = require("path");
 
+app.engine('ejs', ejsMate)
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
