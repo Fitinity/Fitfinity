@@ -1,6 +1,8 @@
 <% layout('layouts/boilerplate') %>
     <h1>All Gyms</h1>
-    
+    <div>
+        <button class="btn btn-success mb-3"><a href="/gyms/new" style="text-decoration: none; color: inherit;">Add New Gym</a></button>
+    </div>
     <ul>
       <% for (let gym of gyms){%>
           <div class="card mb-3">
@@ -19,7 +21,7 @@
                 </div>
             </div>
         </div>
-      <% }%>
+      <% } %>
     </ul>
   </body>
 </html>

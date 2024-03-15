@@ -7,6 +7,7 @@ const { JournalEntry } = require("./models/journal");
 const { Gym } = require('./models/gym');
 const session = require("express-session");
 const methodOverride = require("method-override");
+const gymRoutes = require('./routes/gym')
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/fitfinity")
@@ -34,6 +35,7 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(flash());
 
 //---------------------------------------------------------------------------------------------------------------
 const sessionConfig = {
@@ -80,23 +82,14 @@ app.get("/journal/new", async (req, res) => {
 });
 
 //-----------------------------------------------------------------------------------------------------------
-app.get('/gym', async (req,res)=>{
-  const gyms = await Gym.find({})
-  console.log(gyms);
-  res.render('gym/index',{ gyms })
-})
-
-app.get('/gym/new', async(req,res)=>{
-  res.render('gym/new');
-})
-
-
+app.use('/',gymRoutes)
 
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = "Something went wrong";
   res.status(statusCode).render("error", { err });
 });
+
 app.listen(4000, () => {
   console.log("connection established on port 4000");
 });
