@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const flash = require('connect-flash');
-const { isLoggedIn } = require("../middleware");
+const { isLoggedIn, setCurrentPage } = require("../middleware");
 const { Gym } = require('../models/gym');
 
 // Index route - Display all gyms
-router.get('/gyms',  async (req, res) => {
+router.get('/gyms', setCurrentPage, async (req, res) => {
     try {
         const gyms = await Gym.find({});
         res.render('gym/index', { gyms });
@@ -22,7 +22,7 @@ router.get('/gyms/new', (req, res) => {
 });
 
 // Create route - Create a new gym
-router.post('/gyms', isLoggedIn, async (req, res) => {
+router.post('/gyms', setCurrentPage, isLoggedIn, async (req, res) => {
     try {
         const newGym = new Gym(req.body.gym);
         newGym.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
@@ -38,7 +38,7 @@ router.post('/gyms', isLoggedIn, async (req, res) => {
 });
 
 // Show route - Display details of a specific gym
-router.get('/gyms/:id', isLoggedIn, async (req, res) => {
+router.get('/gyms/:id', setCurrentPage, isLoggedIn, async (req, res) => {
     try {
         const gym = await Gym.findById(req.params.id).populate('reviews');
         if (!gym) {
@@ -54,7 +54,7 @@ router.get('/gyms/:id', isLoggedIn, async (req, res) => {
 });
 
 // Edit route - Display form to edit a specific gym
-router.get('/gyms/:id/edit', isLoggedIn, async (req, res) => {
+router.get('/gyms/:id/edit', setCurrentPage, isLoggedIn, async (req, res) => {
     try {
         const gym = await Gym.findById(req.params.id);
         if (!gym) {
@@ -70,7 +70,7 @@ router.get('/gyms/:id/edit', isLoggedIn, async (req, res) => {
 });
 
 // Update route - Update a specific gym
-router.put('/gyms/:id', isLoggedIn, async (req, res) => {
+router.put('/gyms/:id', setCurrentPage, isLoggedIn, async (req, res) => {
     try {
         const { id } = req.params;
         const gym = await Gym.findByIdAndUpdate(id, { ...req.body.gym }, { new: true });
@@ -84,7 +84,7 @@ router.put('/gyms/:id', isLoggedIn, async (req, res) => {
 });
 
 // Delete route - Delete a specific gym
-router.delete('/gyms/:id', isLoggedIn, async (req, res) => {
+router.delete('/gyms/:id', setCurrentPage, isLoggedIn, async (req, res) => {
     try {
         const { id } = req.params;
         await Gym.findByIdAndDelete(id);

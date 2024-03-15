@@ -8,6 +8,7 @@ const { Gym } = require("./models/gym");
 const session = require("express-session");
 const methodOverride = require("method-override");
 const gymRoutes = require("./routes/gym");
+const journalRoutes = require("./routes/journal")
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/fitfinity")
@@ -28,7 +29,7 @@ const User = require("./models/user");
 const app = express();
 const flash = require("connect-flash");
 const path = require("path");
-const { setCurrentPage } = require("./middleware");
+const { setCurrentPage,setGreeting } = require("./middleware");
 
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
@@ -71,20 +72,21 @@ app.get("/fakeUser", async (req, res) => {
   res.send(newUser);
 });
 //-----------------------------------------------------------------------------------------------------------
-app.get("/", (req, res) => {
-  res.send("home");
-});
-app.get("/journals", setCurrentPage, async (req, res) => {
-  const journals = await JournalEntry.find({});
+// app.get("/", (req, res) => {
+//   res.send("home");
+// });
+// app.get("/journals", setCurrentPage, async (req, res) => {
+//   const journals = await JournalEntry.find({});
 
-  res.render("journal/index", { journals });
-});
-app.get("/journals/new", async (req, res) => {
-  res.render("journal/new");
-});
+//   res.render("journals/index", { journals });
+// });
+// app.get("/journals/new", async (req, res) => {
+//   res.render("journals/new");
+// });
 
 //-----------------------------------------------------------------------------------------------------------
 app.use("/", gymRoutes);
+app.use("/",journalRoutes)
 
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
