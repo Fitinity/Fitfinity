@@ -4,7 +4,7 @@ require("dotenv").config();
 
 const mongoose = require("mongoose");
 const { JournalEntry } = require("./models/journal");
-const { Gym } = require('./models/gym');
+const { Gym } = require("./models/gym");
 const session = require("express-session");
 const methodOverride = require("method-override");
 
@@ -27,6 +27,7 @@ const User = require("./models/user");
 const app = express();
 const flash = require("connect-flash");
 const path = require("path");
+const { setCurrentPage } = require("./middleware");
 
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
@@ -71,22 +72,21 @@ app.get("/fakeUser", async (req, res) => {
 app.get("/", (req, res) => {
   res.send("home");
 });
-app.get("/journal", async (req, res) => {
+app.get("/journals", setCurrentPage, async (req, res) => {
   const journals = await JournalEntry.find({});
+
   res.render("journal/index", { journals });
 });
-app.get("/journal/new", async (req, res) => {
+app.get("/journals/new", async (req, res) => {
   res.render("journal/new");
 });
 
 //-----------------------------------------------------------------------------------------------------------
-app.get('/gym', async (req,res)=>{
-  const gyms = await Gym.find({})
+app.get("/gyms", setCurrentPage, async (req, res) => {
+  const gyms = await Gym.find({});
   console.log(gyms);
-  res.render('gym/index',{ gyms })
-})
-
-
+  res.render("gym/index", { gyms });
+});
 
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;

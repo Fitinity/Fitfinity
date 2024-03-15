@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 
 const { isLoggedIn } = require("../middleware");
-const { JournalEntry, JournalEntry } = require("../models/journal");
+const { JournalEntry } = require("../models/journal");
 router.get("/journals", isLoggedIn, async (req, res) => {
   try {
-    const journal = await JournalEntry.find({ author: req.user._id });
+    const journals = await JournalEntry.find({ author: req.user._id });
     res.render("journal/index", { journals });
   } catch (err) {
     req.flash("error", "Failed to fetch journal entries");
@@ -40,13 +40,35 @@ router.get("/journals/:id", isLoggedIn, isAuthor, async (req, res) => {
     res.redirect("/journals");
   }
 });
-router.put('/journals/:id',isLoggedIn,isAuthor,async(req,res)=>{
-    try{
-        await JournalEntry.findByIdAndUpdate(req.params.id,{
-            title:req.body.title,
-            content:req.body.content,
-        })
-        req.flash('success', 'Journal entry updated successfully');
-        res.redirect(`/journals/${req.params.id}`);
-    }
-})
+router.put("/journals/:id", isLoggedIn, isAuthor, async (req, res) => {
+  try {
+    await JournalEntry.findByIdAndUpdate(req.params.id, {
+      title: req.body.title,
+      content: req.body.content,
+    });
+    req.flash("success", "Journal entry updated successfully");
+    res.redirect(`/journals/${req.params.id}`);
+  } catch (err) {
+    req.flash("error", "Failed to update journal entry");
+    res.redirect(`/journals/${req.params.id}/edit`);
+  }
+});
+router.get("/journals/:id/edit", isLoggedIn, isAuthor, async (req, res) => {
+  try {
+    const journalEntry = await JournalEntry.findById(req.params.id);
+    res.render("journals/edit", { journalEntry });
+  } catch (err) {
+    req.flash("error", "Failed to fetch journal entry for editing");
+    res.redirect("/journals");
+  }
+});
+router.delete("/journals/:id", isLoggedIn, isAuthor, async (req, res) => {
+  try {
+    await JournalEntry.findByIdAndDelete(req.params.id);
+    res.redirect("/journals");
+  } catch (err) {
+    req.flash("error", "Failed to delete journal entry");
+    res.redirect(`/journals/${req.params.id}`);
+  }
+});
+module.exports = router;
