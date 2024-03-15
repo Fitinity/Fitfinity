@@ -93,6 +93,7 @@ app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.currentUser = req.user;
+  console.log(res.locals.currentUser);
   /*req.user is a property commonly used in web applications that implement authentication, especially when using middleware like Passport.js.
      It represents the currently authenticated user.
 
@@ -103,8 +104,10 @@ app.use((req, res, next) => {
 });
 
 app.use("/", gymRoutes);
+
 app.use("/", journalRoutes);
 app.use("/", userRoutes);
+console.log("meow");
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = "Something went wrong";

@@ -23,45 +23,30 @@
       </div>
 
       <div class="mb-3">
-        <div class="mb-3 custom-file">
-          <!-- <label
-            for="formFileMultiple"
-            class="form-label custom-file-label"
-            for="imamges"
-            >Add Image(s)</label
-          >
-          <input
-            class="form-control"
-            type="file"
-            id="images"
-            name="journals[image]"
-            id="formFileMultiple"
-            multiple
-          />
-        </div> -->
-
-        <!-- <label class="form-label" for="image">Image URL</label>
-                    <input class="form-control" type="text" name="campground[image]" id="image" placeholder="Image URL"
-                        required>
-                    <div class="valid-feedback">
-                        Looks Good!
-                    </div> -->
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label" for="description">Description</label>
+        <label class="form-label" for="content">Content</label>
         <textarea
           class="form-control"
-          type="text"
-          id="image"
-          name="campground[description]"
-          placeholder="Description"
+          id="content"
+          name="journals[content]"
+          placeholder="Content"
           required
         ></textarea>
         <div class="valid-feedback">Looks Good!</div>
       </div>
+
       <div class="mb-3">
-        <button class="btn btn-success">Add Entries</button>
+        <label class="form-label" for="images">Add Image(s)</label>
+        <input
+          class="form-control"
+          type="file"
+          id="images"
+          name="images"
+          multiple
+        />
+      </div>
+
+      <div class="mb-3">
+        <button class="btn btn-success">Add Entry</button>
       </div>
     </form>
     <a href="/journals">All Entries</a>

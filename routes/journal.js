@@ -4,7 +4,8 @@ const router = express.Router();
 const { isLoggedIn, setGreeting, setCurrentPage } = require("../middleware");
 const { JournalEntry } = require("../models/journal");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+const storage = require("../cloudinary/index");
+const upload = multer({ dest: "storage" });
 router.get("/journals", setCurrentPage, setGreeting, async (req, res) => {
   try {
     const journals = await JournalEntry.find({});
