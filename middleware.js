@@ -22,6 +22,16 @@ module.exports.storeReturnTo = (req, res, next) => {
 //     return res.
 //   }
 // };
+module.exports.vaidateJournal = (req, res, next) => {
+  const result = JournalEntry.validate(req.body);
+  const { error } = result;
+  if (error) {
+    const msg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(msg, 404);
+  } else {
+    next();
+  }
+};
 module.exports.validateReview = (req, res, next) => {
   const { error } = reviewSchema.validate(req.body);
   if (error) {
