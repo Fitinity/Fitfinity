@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const mongoose = require("mongoose");
 const { JournalEntry } = require("./models/journal");
+const { Gym } = require('./models/gym');
 const session = require("express-session");
 const methodOverride = require("method-override");
 
@@ -77,6 +78,15 @@ app.get("/journal", async (req, res) => {
 app.get("/journal/new", async (req, res) => {
   res.render("journal/new");
 });
+
+//-----------------------------------------------------------------------------------------------------------
+app.get('/gym', async (req,res)=>{
+  const gyms = await Gym.find({})
+  console.log(gyms);
+  res.render('gym/index',{ gyms })
+})
+
+
 
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
