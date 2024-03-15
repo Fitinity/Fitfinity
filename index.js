@@ -86,6 +86,10 @@ app.get('/gym', async (req,res)=>{
   res.render('gym/index',{ gyms })
 })
 
+app.get('/gym/new', async(req,res)=>{
+  res.render('gym/new');
+})
+
 
 
 app.use((err, req, res, next) => {
