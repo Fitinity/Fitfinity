@@ -12,10 +12,10 @@ router.get("/journals", setCurrentPage, setGreeting,  async (req, res) => {
     res.redirect("/home");
   }
 });
-router.get("/journals/new", isLoggedIn, (req, res) => {
+router.get("/journals/new", (req, res) => {
   res.render("journals/new");
 });
-router.post("/journals", isLoggedIn, async (req, res) => {
+router.post("/journals", async (req, res) => {
   try {
     const JournalEntry = new JournalEntry({
       author: req.user._id,

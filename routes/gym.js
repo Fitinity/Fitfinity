@@ -17,7 +17,7 @@ router.get('/gyms', setCurrentPage, async (req, res) => {
 });
 
 // New route - Display form to create a new gym
-router.get('/gyms/new', (req, res) => {
+router.get('/gyms/new', setCurrentPage, (req, res) => {
     res.render('gym/new');
 });
 
