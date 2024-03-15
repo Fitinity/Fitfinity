@@ -1,21 +1,23 @@
 const express = require("express");
 const router = express.Router();
-
-const { isLoggedIn } = require("../middleware");
+const flash = require("connect-flash");
+const { isLoggedIn, setCurrentPage } = require("../middleware");
 const { JournalEntry } = require("../models/journal");
-router.get("/journals", isLoggedIn, async (req, res) => {
+router.get("/journals", setCurrentPage, async (req, res) => {
   try {
-    const journals = await JournalEntry.find({ author: req.user._id });
-    res.render("journal/index", { journals });
+    // const journals = await JournalEntry.find({ author: req.user._id });
+    const journals = await JournalEntry.find({});
+    res.render("journals/index", { journals });
   } catch (err) {
     req.flash("error", "Failed to fetch journal entries");
+    console.log(err);
     res.redirect("/home");
   }
 });
-router.get("/journals/new", isLoggedIn, (req, res) => {
+router.get("/journals/new", setCurrentPage, (req, res) => {
   res.render("journals/new");
 });
-router.post("/journals", isLoggedIn, async (req, res) => {
+router.post("/journals", setCurrentPage, async (req, res) => {
   try {
     const JournalEntry = new JournalEntry({
       author: req.user._id,
@@ -31,7 +33,7 @@ router.post("/journals", isLoggedIn, async (req, res) => {
     res.redirect("journals/new");
   }
 });
-router.get("/journals/:id", isLoggedIn, isAuthor, async (req, res) => {
+router.get("/journals/:id", setCurrentPage, async (req, res) => {
   try {
     const journalEntry = await JournalEntry.findById(req.params.id);
     res.render("journals/show", { journalEntry });
@@ -40,7 +42,7 @@ router.get("/journals/:id", isLoggedIn, isAuthor, async (req, res) => {
     res.redirect("/journals");
   }
 });
-router.put("/journals/:id", isLoggedIn, isAuthor, async (req, res) => {
+router.put("/journals/:id", setCurrentPage, async (req, res) => {
   try {
     await JournalEntry.findByIdAndUpdate(req.params.id, {
       title: req.body.title,
@@ -53,7 +55,7 @@ router.put("/journals/:id", isLoggedIn, isAuthor, async (req, res) => {
     res.redirect(`/journals/${req.params.id}/edit`);
   }
 });
-router.get("/journals/:id/edit", isLoggedIn, isAuthor, async (req, res) => {
+router.get("/journals/:id/edit", setCurrentPage, async (req, res) => {
   try {
     const journalEntry = await JournalEntry.findById(req.params.id);
     res.render("journals/edit", { journalEntry });
@@ -62,7 +64,7 @@ router.get("/journals/:id/edit", isLoggedIn, isAuthor, async (req, res) => {
     res.redirect("/journals");
   }
 });
-router.delete("/journals/:id", isLoggedIn, isAuthor, async (req, res) => {
+router.delete("/journals/:id", setCurrentPage, async (req, res) => {
   try {
     await JournalEntry.findByIdAndDelete(req.params.id);
     res.redirect("/journals");

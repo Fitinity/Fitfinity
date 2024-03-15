@@ -8,7 +8,7 @@ const { Gym } = require("./models/gym");
 const session = require("express-session");
 const methodOverride = require("method-override");
 const gymRoutes = require("./routes/gym");
-
+const journalRoutes = require("./routes/journal");
 mongoose
   .connect("mongodb://127.0.0.1:27017/fitfinity")
   .then(() => console.log("Connected!"));
@@ -71,21 +71,21 @@ app.get("/fakeUser", async (req, res) => {
   res.send(newUser);
 });
 //-----------------------------------------------------------------------------------------------------------
-app.get("/", (req, res) => {
-  res.send("home");
-});
-app.get("/journals", setCurrentPage, async (req, res) => {
-  const journals = await JournalEntry.find({});
+// app.get("/", (req, res) => {
+//   res.send("home");
+// });
+// app.get("/journals", setCurrentPage, async (req, res) => {
+//   const journals = await JournalEntry.find({});
 
-  res.render("journal/index", { journals });
-});
-app.get("/journals/new", async (req, res) => {
-  res.render("journal/new");
-});
+//   res.render("journal/index", { journals });
+// });
+// app.get("/journals/new", async (req, res) => {
+//   res.render("journal/new");
+// });
 
 //-----------------------------------------------------------------------------------------------------------
 app.use("/", gymRoutes);
-
+app.use("/", journalRoutes);
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = "Something went wrong";
