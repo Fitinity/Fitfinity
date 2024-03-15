@@ -67,9 +67,32 @@ module.exports.setCurrentPage = (req, res, next) => {
 
   // Set the currentPage variable based on the page name
   res.locals.currentPage = getPageName(currentPath);
-  console.log(res.locals.currentPage);
+
   // Call next middleware in the chain
   next();
 };
+
+module.exports.setGreeting = (req, res, next) => {
+
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0'); // Get hours and pad with leading zero if necessary
+
+  // console.log(hours); // Output: Current time in 24-hour format (HH:mm:ss)
+
+  const getGreeting = () => {
+      if (hours >= 6 && hours <= 11) {
+          return "Good Morning";
+      } else if (hours >= 12 && hours <= 16) {
+          return "Good Afternoon";
+      } else if (hours > 16 && hours <= 19) {
+          return "Good Evening";
+      } else {
+          return "Good Night";
+      }
+  }
+  res.locals.greeting = getGreeting();
+  next()
+};
+
 
 // Export the middleware function

@@ -1,11 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const flash = require("connect-flash");
-const { isLoggedIn, setCurrentPage } = require("../middleware");
+
+const { isLoggedIn, setGreeting, setCurrentPage } = require("../middleware");
 const { JournalEntry } = require("../models/journal");
-router.get("/journals", setCurrentPage, async (req, res) => {
+router.get("/journals", setCurrentPage, setGreeting, async (req, res) => {
   try {
-    // const journals = await JournalEntry.find({ author: req.user._id });
     const journals = await JournalEntry.find({});
     res.render("journals/index", { journals });
   } catch (err) {
@@ -14,10 +13,10 @@ router.get("/journals", setCurrentPage, async (req, res) => {
     res.redirect("/home");
   }
 });
-router.get("/journals/new", setCurrentPage, (req, res) => {
+router.get("/journals/new", (req, res) => {
   res.render("journals/new");
 });
-router.post("/journals", setCurrentPage, async (req, res) => {
+router.post("/journals", async (req, res) => {
   try {
     const JournalEntry = new JournalEntry({
       author: req.user._id,
@@ -33,7 +32,7 @@ router.post("/journals", setCurrentPage, async (req, res) => {
     res.redirect("journals/new");
   }
 });
-router.get("/journals/:id", setCurrentPage, async (req, res) => {
+router.get("/journals/:id", isLoggedIn, async (req, res) => {
   try {
     const journalEntry = await JournalEntry.findById(req.params.id);
     res.render("journals/show", { journalEntry });
@@ -42,7 +41,7 @@ router.get("/journals/:id", setCurrentPage, async (req, res) => {
     res.redirect("/journals");
   }
 });
-router.put("/journals/:id", setCurrentPage, async (req, res) => {
+router.put("/journals/:id", isLoggedIn, async (req, res) => {
   try {
     await JournalEntry.findByIdAndUpdate(req.params.id, {
       title: req.body.title,
@@ -55,7 +54,7 @@ router.put("/journals/:id", setCurrentPage, async (req, res) => {
     res.redirect(`/journals/${req.params.id}/edit`);
   }
 });
-router.get("/journals/:id/edit", setCurrentPage, async (req, res) => {
+router.get("/journals/:id/edit", isLoggedIn, async (req, res) => {
   try {
     const journalEntry = await JournalEntry.findById(req.params.id);
     res.render("journals/edit", { journalEntry });
@@ -64,7 +63,7 @@ router.get("/journals/:id/edit", setCurrentPage, async (req, res) => {
     res.redirect("/journals");
   }
 });
-router.delete("/journals/:id", setCurrentPage, async (req, res) => {
+router.delete("/journals/:id", isLoggedIn, async (req, res) => {
   try {
     await JournalEntry.findByIdAndDelete(req.params.id);
     res.redirect("/journals");
