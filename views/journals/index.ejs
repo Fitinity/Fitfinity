@@ -9,7 +9,7 @@
   <ul>
     <% for (let journal of journals) { %>
       <!-- <a href="/journals/<%= journal._id %>"> -->
-      <a href="/gyms">
+      <a href="/journals/<%= journal._id %>">
         <div class="card text-bg-dark mb-3" style="height: 30vh; transition: transform 0.3s ease;"
           onmouseover="this.style.transform = 'scale(1.05)';" onmouseout="this.style.transform = 'scale(1)';">
           <img src="<%= journal.images[0].url %>" class="card-img mb-5" alt="<%= journal.images[0].filename %>"

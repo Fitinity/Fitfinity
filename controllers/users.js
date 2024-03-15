@@ -1,6 +1,6 @@
-const { User, register } = require("../models/user");
+const { User } = require("../models/user");
 
-module.exports.registerPost = (req, res) => {
+module.exports.register = (req, res) => {
   res.render("users/register");
 };
 module.exports.registerPost = async (req, res) => {
@@ -27,4 +27,13 @@ module.exports.loginPost = (req, res) => {
   console.log(res.locals.returnTo);
   const redirectUrl = res.locals.returnTo || "/Home";
   res.redirect(redirectUrl);
+};
+module.exports.logout = (req, res) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    req.flash("success", "Goodbye!");
+    res.redirect("/home");
+  });
 };

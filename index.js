@@ -9,7 +9,9 @@ const session = require("express-session");
 const methodOverride = require("method-override");
 const gymRoutes = require("./routes/gym");
 const journalRoutes = require("./routes/journal");
-
+const userRoutes = require("./routes/users");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 mongoose
   .connect("mongodb://127.0.0.1:27017/fitfinity")
   .then(() => console.log("Connected!"));
@@ -85,9 +87,24 @@ app.get("/fakeUser", async (req, res) => {
 // });
 
 //-----------------------------------------------------------------------------------------------------------
+app.use((req, res, next) => {
+  console.log(req.session);
+
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  res.locals.currentUser = req.user;
+  /*req.user is a property commonly used in web applications that implement authentication, especially when using middleware like Passport.js.
+     It represents the currently authenticated user.
+
+    When a user logs in, Passport.js typically sets req.user to the authenticated user object. 
+    This object can include information about the user, such as their username, ID, and other relevant details.
+    */
+  next();
+});
+
 app.use("/", gymRoutes);
 app.use("/", journalRoutes);
-
+app.use("/", userRoutes);
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = "Something went wrong";
