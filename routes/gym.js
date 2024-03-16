@@ -70,7 +70,7 @@ router.get("/gyms/:id", setCurrentPage, isLoggedIn, async (req, res) => {
       req.flash("error", "Gym not found");
       return res.redirect("/gyms");
     }
-    console.dir(gym);
+    console.log(gym);
     res.render("gym/show", { gym });
   } catch (err) {
     console.error("Error:", err);

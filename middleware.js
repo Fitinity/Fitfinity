@@ -43,12 +43,13 @@ module.exports.validateReview = (req, res, next) => {
 };
 module.exports.reviewAuthor = async (req, res, next) => {
   const { id, reviewid } = req.params;
+  console.log("meow");
   console.log(reviewid);
   const review = await Review.findById(reviewid);
   console.log(review);
   if (!review.author.equals(req.user._id)) {
     req.flash("error", "You do not have permission to do that");
-    // return res.redirect(`/campgrounds/${id}`);
+    return res.redirect(`/gyms/${id}`);
   }
   next();
 };
@@ -56,7 +57,7 @@ module.exports.reviewAuthor = async (req, res, next) => {
 module.exports.setCurrentPage = (req, res, next) => {
   // Get the current pathname from the URL
   const currentPath = req.originalUrl;
-  
+
   // Define a function to extract the page name from the pathname
   function getPageName(path) {
     // Remove leading slash and split the pathname by '/'

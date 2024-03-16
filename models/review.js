@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Review = require("./review");
 const User = require("./user");
 const reviewSchema = new Schema({
   body: String,
@@ -10,4 +9,6 @@ const reviewSchema = new Schema({
     ref: User,
   },
 });
-module.exports = mongoose.model("Review", reviewSchema);
+const Review = mongoose.model("Review", reviewSchema);
+
+module.exports = { Review };
