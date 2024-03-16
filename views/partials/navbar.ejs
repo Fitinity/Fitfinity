@@ -16,11 +16,11 @@
       <ul class="navbar-nav mx-auto">
         <li class="nav-item">
           <a
-            class="nav-link <%= currentPage === 'home' ? 'active' : '' %>"
+            class="nav-link <%= currentPage === '' ? 'active' : '' %>"
             aria-current="page"
             href="/"
-            >Home</a
-          >
+            >Home
+          </a>
         </li>
         <li class="nav-item">
           <a
@@ -39,7 +39,12 @@
           >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Recommendation</a>
+          <a
+            class="nav-link <%= currentPage === 'recommendation' ? 'active' : '' %>"
+            aria-current="page"
+            href="/gyms"
+            >Recommendation</a
+          >
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">About</a>

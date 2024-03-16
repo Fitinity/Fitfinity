@@ -21,6 +21,8 @@ router.get("/journals", setCurrentPage, setGreeting, async (req, res) => {
 // router.post("/journals", setCurrentPage, upload.single("image"), (req, res) => {
 //   res.send(req.body, req.file);
 // });
+
+// Show All Journal Entries
 router.get(
   "/journals/new",
   isLoggedIn,
@@ -30,6 +32,8 @@ router.get(
     res.render("journals/new");
   }
 );
+
+// POST route for New Journal Entry
 router.post(
   "/journals",
   setCurrentPage,
@@ -48,7 +52,8 @@ router.post(
         images,
         author: req.user._id,
       });
-
+      console.log(req.user._id);
+      newJournalEntry.author = req.user._id;
       await newJournalEntry.save();
 
       req.flash("success", "Journal entry created successfully");
@@ -61,15 +66,18 @@ router.post(
   }
 );
 
+// Show page
 router.get("/journals/:id", setCurrentPage, async (req, res) => {
   try {
-    const journalEntry = await JournalEntry.findById(req.params.id);
+    const journalEntry = await JournalEntry.findById(req.params.id).populate('author');
     res.render("journals/show", { journalEntry });
   } catch (err) {
     req.flash("error", "Failed to fetch journal entry");
     res.redirect("/journals");
   }
 });
+
+// Update Submission
 router.put("/journals/:id", isLoggedIn, async (req, res) => {
   try {
     const journalEntry = await JournalEntry.findById(req.params.id);
@@ -92,13 +100,15 @@ router.put("/journals/:id", isLoggedIn, async (req, res) => {
     res.redirect(`/journals/${req.params.id}/edit`);
   }
 });
+
+// Update Route
 router.get(
   "/journals/:id/edit",
   isLoggedIn,
   setCurrentPage,
   async (req, res) => {
     try {
-      const journalEntry = await JournalEntry.findById(req.params.id);
+      const journalEntry = await JournalEntry.findById(req.params.id).populate("user");
       res.render("journals/edit", { journalEntry });
     } catch (err) {
       req.flash("error", "Failed to fetch journal entry for editing");
@@ -106,6 +116,8 @@ router.get(
     }
   }
 );
+
+
 router.delete("/journals/:id", isLoggedIn, async (req, res) => {
   try {
     await JournalEntry.findByIdAndDelete(req.params.id);

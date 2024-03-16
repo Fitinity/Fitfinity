@@ -56,7 +56,7 @@ module.exports.reviewAuthor = async (req, res, next) => {
 module.exports.setCurrentPage = (req, res, next) => {
   // Get the current pathname from the URL
   const currentPath = req.originalUrl;
-
+  
   // Define a function to extract the page name from the pathname
   function getPageName(path) {
     // Remove leading slash and split the pathname by '/'

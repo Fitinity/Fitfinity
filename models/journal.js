@@ -19,7 +19,7 @@ const opts = { toJSON: { virtuals: true } };
 const journalEntrySchema = new mongoose.Schema({
   author: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: User, // Reference to the User model
+    ref: 'User', 
     required: true,
   },
   title: {

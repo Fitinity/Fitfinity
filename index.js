@@ -21,7 +21,6 @@ const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
   console.log("Database connected");
-  console.log(process.env.CLOUDINARY_KEY);
 });
 
 //--------------------------------------------------------------------------------------------------------------
@@ -103,6 +102,10 @@ app.use((req, res, next) => {
     */
   next();
 });
+
+app.get('/',setCurrentPage,(req,res)=>{
+  res.render('home')
+})
 
 app.use("/", gymRoutes);
 app.use("/", journalRoutes);
