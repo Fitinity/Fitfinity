@@ -60,12 +60,16 @@ router.post(
 // Show route - Display details of a specific gym
 router.get("/gyms/:id", setCurrentPage, isLoggedIn, async (req, res) => {
   try {
-    const gym = await Gym.findById(req.params.id).populate("reviews");
+    const gym = await Gym.findById(req.params.id).populate({
+      path: "reviews",
+      populate: {
+        path: "author",
+      },
+    });
     if (!gym) {
       req.flash("error", "Gym not found");
       return res.redirect("/gyms");
     }
-    console.log("yo brother");
     console.dir(gym);
     res.render("gym/show", { gym });
   } catch (err) {
