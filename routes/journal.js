@@ -4,11 +4,13 @@ const router = express.Router();
 const { isLoggedIn, setGreeting, setCurrentPage } = require("../middleware");
 const { JournalEntry } = require("../models/journal");
 const multer = require("multer");
-const storage = require("../cloudinary/index");
-const upload = multer({ dest: "storage" });
+const { storage } = require("../cloudinary/index");
+const upload = multer({ storage });
+
 router.get("/journals", setCurrentPage, setGreeting, async (req, res) => {
   try {
     const journals = await JournalEntry.find({});
+    console.log("meow");
     res.render("journals/index", { journals });
   } catch (err) {
     req.flash("error", "Failed to fetch journal entries");
@@ -19,27 +21,46 @@ router.get("/journals", setCurrentPage, setGreeting, async (req, res) => {
 // router.post("/journals", setCurrentPage, upload.single("image"), (req, res) => {
 //   res.send(req.body, req.file);
 // });
-router.get("/journals/new", setCurrentPage, setGreeting, (req, res) => {
-  res.render("journals/new");
-});
-router.post("/journals", setCurrentPage, async (req, res) => {
-  try {
-    const JournalEntry = new JournalEntry({
-      // author: req.user._id,
-      title: req.body.title,
-      content: req.body.content,
-    });
-
-    await JournalEntry.save();
-    console.log("jeww");
-    req.flash("success", "Journal entry created successfully");
-    res.redirect("/journals");
-  } catch (err) {
-    console.log(err);
-    req.flash("error", "Failed to create journal entry");
-    res.redirect("journals/new");
+router.get(
+  "/journals/new",
+  isLoggedIn,
+  setCurrentPage,
+  setGreeting,
+  (req, res) => {
+    res.render("journals/new");
   }
-});
+);
+router.post(
+  "/journals",
+  setCurrentPage,
+  upload.array("images"),
+  async (req, res) => {
+    try {
+      const { title, content } = req.body;
+      const images = req.files.map((file) => ({
+        url: file.path,
+        filename: file.filename,
+      }));
+
+      const newJournalEntry = new JournalEntry({
+        title,
+        content,
+        images,
+        author: req.user._id,
+      });
+
+      await newJournalEntry.save();
+
+      req.flash("success", "Journal entry created successfully");
+      res.redirect("/journals");
+    } catch (err) {
+      console.error(err);
+      req.flash("error", "Failed to create journal entry");
+      res.redirect("journals/new");
+    }
+  }
+);
+
 router.get("/journals/:id", setCurrentPage, async (req, res) => {
   try {
     const journalEntry = await JournalEntry.findById(req.params.id);

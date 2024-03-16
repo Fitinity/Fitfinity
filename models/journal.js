@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
+const User = require("./user");
 const imageSchema = new Schema({
   url: {
     type: String,
@@ -15,7 +15,7 @@ const imageSchema = new Schema({
 const journalEntrySchema = new mongoose.Schema({
   author: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Reference to the User model
+    ref: User, // Reference to the User model
     required: true,
   },
   title: {
