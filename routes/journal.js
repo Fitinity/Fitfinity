@@ -72,26 +72,40 @@ router.get("/journals/:id", setCurrentPage, async (req, res) => {
 });
 router.put("/journals/:id", isLoggedIn, async (req, res) => {
   try {
+    const journalEntry = await JournalEntry.findById(req.params.id);
+    // Check if the logged-in user is the author of the journal entry
+    if (!journalEntry.author.equals(req.user._id)) {
+      req.flash("error", "You are not authorized to edit this journal entry");
+      return res.redirect(`/journals/${req.params.id}`);
+    }
+    // Update the journal entry
+    console.log("Heil");
+    console.log(req.body.title);
     await JournalEntry.findByIdAndUpdate(req.params.id, {
       title: req.body.title,
       content: req.body.content,
     });
     req.flash("success", "Journal entry updated successfully");
-    res.redirect(`/journals/${req.params.id}`);
+    res.redirect(`/journals`);
   } catch (err) {
     req.flash("error", "Failed to update journal entry");
     res.redirect(`/journals/${req.params.id}/edit`);
   }
 });
-router.get("/journals/:id/edit", isLoggedIn, async (req, res) => {
-  try {
-    const journalEntry = await JournalEntry.findById(req.params.id);
-    res.render("journals/edit", { journalEntry });
-  } catch (err) {
-    req.flash("error", "Failed to fetch journal entry for editing");
-    res.redirect("/journals");
+router.get(
+  "/journals/:id/edit",
+  isLoggedIn,
+  setCurrentPage,
+  async (req, res) => {
+    try {
+      const journalEntry = await JournalEntry.findById(req.params.id);
+      res.render("journals/edit", { journalEntry });
+    } catch (err) {
+      req.flash("error", "Failed to fetch journal entry for editing");
+      res.redirect("/journals");
+    }
   }
-});
+);
 router.delete("/journals/:id", isLoggedIn, async (req, res) => {
   try {
     await JournalEntry.findByIdAndDelete(req.params.id);

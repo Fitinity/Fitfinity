@@ -1,0 +1,74 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="row">
+  <h1 class="text-center">Edit Camprground</h1>
+  <!--offset-3 is one of the way of centering everything -->
+  <div class="col-6 offset-3">
+    <form
+      action="/journals/<%=journalEntry._id%>?_method=PUT"
+      method="POST"
+      novalidate
+      class="needs-validation"
+      enctype="multipart/form-data"
+    >
+      <div class="mb-3">
+        <label for="title" class="form-label fs-2">Title</label>
+        <input
+          type="text"
+          class="form-control"
+          id="title"
+          name="title"
+          value="<%=journalEntry.title %>"
+          required
+        />
+        <div class="valid-feedback">Looks Good</div>
+      </div>
+
+      <label for="image" class="form-label fs-2 mb-3">Upload Images</label>
+
+      <div class="input-group mb-3">
+        <input
+          type="file"
+          class="form-control"
+          id="image"
+          name="image"
+          multiple
+        />
+      </div>
+      <div class="mb-3">
+        <label class="form-label fs-2" for="description">Description</label>
+        <textarea
+          name="description"
+          id="description"
+          type="text"
+          class="form-control"
+          required
+        >
+<%= journalEntry.content %></textarea
+        >
+        <div class="valid-feedback">Looks Good</div>
+      </div>
+      
+      </div>
+      <div class="mb-3">
+        <% journalEntry.images.forEach(function(img,i){ %>
+        <img src="<%= img.thumbnail %>" class="img-thumbnail" alt="" />
+        <div class="form-check-inline">
+          <input
+            type="checkbox"
+            name="deleteImages[]"
+            id="image-<%=i %>"
+            value="<%= img.filename %>"
+          />
+        </div>
+        <label for="image-<%=i %>">Delete</label>
+        <% }) %>
+      </div>
+      <div class="mb-3">
+        <button class="btn btn-info">Update Journal</button>
+      </div>
+    </form>
+
+    <a href="/journals/<%= journalEntry._id%>">Back To Journal</a>
+  </div>
+</div>
