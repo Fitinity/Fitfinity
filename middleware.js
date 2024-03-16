@@ -7,8 +7,6 @@ module.exports.isLoggedIn = (req, res, next) => {
     req.flash("error", "You must be signed in first!");
     return res.redirect("/login");
   }
-  console.log("Meow");
-  console.log(req.user._id);
   next();
 };
 module.exports.storeReturnTo = (req, res, next) => {
