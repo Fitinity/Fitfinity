@@ -5,7 +5,13 @@ const { isLoggedIn, setCurrentPage } = require("../middleware");
 const { Gym } = require("../models/gym");
 const multer = require("multer");
 const { storage } = require("../cloudinary/index");
-const upload = multer({ storage }); // Index route - Display all gyms
+const upload = multer({ storage });
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+
+mbxGeocoding({ accessToken: mapBoxToken });
+
 router.get("/gyms", setCurrentPage, async (req, res) => {
   try {
     const gyms = await Gym.find({});
@@ -28,9 +34,18 @@ router.post(
   setCurrentPage,
   isLoggedIn,
   upload.array("images"),
+
   async (req, res) => {
+    const geoData = await geocoder
+      .forwardGeocode({
+        query: req.body.location,
+        limit: 1,
+      })
+      .send();
+
     try {
       const { title, location, price, description } = req.body;
+
       const images = req.files.map((file) => ({
         url: file.path,
         filename: file.filename,
@@ -39,6 +54,8 @@ router.post(
       const newGym = new Gym({
         title,
         location,
+        geometry: geoData.body.features[0].geometry,
+
         price,
         description,
         images,
