@@ -6,23 +6,7 @@
   <div class="col-6">
     <div id="map" style="width: 400px; height: 300px"></div>
 
-    <!-- <script>
-          mapboxgl.accessToken = "<%= process.env.MAPBOX_TOKEN %>";
-          const map = new mapboxgl.Map({
-            container: "map", // container ID
-            style: "mapbox://styles/mapbox/streets-v12", // style URL
-            center:[<%= gym.geometry.coordinates[0] %>, <%= gym.geometry.coordinates[1] %>], // starting position [lng, lat]
-            zoom: 9, // starting zoom
-          });
-          new mapboxgl.Marker()
-      .setLngLat(gym.geometry.coordinates)
-      .setPopup(
-        new mapboxgl.Popup({ offset: 25 }).setHTML(
-          `<h3>${gym.title}</h3><p>${gym.location}`
-        )
-      )
-      .addTo(map);
-    </script> -->
+    
     <div
       id="carouselExampleAutoplaying"
       class="carousel slide"
