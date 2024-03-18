@@ -40,6 +40,8 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "assets")));
+
 app.use(flash());
 
 //---------------------------------------------------------------------------------------------------------------
@@ -105,7 +107,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/", setCurrentPage, (req, res) => {
-  res.render("home");
+  res.render("home/home");
 });
 
 app.use("/", gymRoutes);
