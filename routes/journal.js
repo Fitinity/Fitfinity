@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { isLoggedIn, setGreeting, setCurrentPage ,isAuthor} = require("../middleware");
+const { isLoggedIn, setGreeting, setCurrentPage, isJournalAuthor } = require("../middleware");
 const { JournalEntry } = require("../models/journal");
 const multer = require("multer");
 const { storage } = require("../cloudinary/index");
@@ -81,10 +81,10 @@ router.get("/journals/:id", setCurrentPage, async (req, res) => {
 
 
 // Update Route
-router.get("/journals/:id/edit",isLoggedIn,setCurrentPage,isAuthor, async (req, res) => {
+router.get("/journals/:id/edit", isLoggedIn, setCurrentPage, isJournalAuthor, async (req, res) => {
   try {
     const journal = await JournalEntry.findById(req.params.id).populate('author');
-   res.render("journals/edit", { journal }); // Assuming your EJS file is named editJournalEntry.ejs
+    res.render("journals/edit", { journal }); // Assuming your EJS file is named editJournalEntry.ejs
   } catch (err) {
     console.error(err);
     req.flash("error", "Failed to fetch journal entry for editing");
@@ -93,40 +93,41 @@ router.get("/journals/:id/edit",isLoggedIn,setCurrentPage,isAuthor, async (req, 
 });
 
 
-router.put("/journals/:id",isLoggedIn, isAuthor,  upload.array("images"),
- async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { title, content } = req.body; // Extract title and content from req.body
-    // Find the journal entry by ID and update only title and content fields
-    const updatedJournal = await JournalEntry.findByIdAndUpdate(id, { title, content }, { new: true });
+router.put("/journals/:id", isLoggedIn, isJournalAuthor, upload.array("images"),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { title, content } = req.body; // Extract title and content from req.body
+      // Find the journal entry by ID and update only title and content fields
+      const updatedJournal = await JournalEntry.findByIdAndUpdate(id, { title, content }, { new: true });
 
-    // Optionally, handle image uploads separately if req.files exists
-    // Assuming you have a field named 'images' in your form
-    if (req.files && req.files.length > 0) {
-      const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
-      updatedJournal.images.push(...imgs);
-    }
-
-    // Handle image deletion if req.body.deleteImages is present
-    if (req.body.deleteImages) {
-      for (let filename of req.body.deleteImages) {
-        // Delete the image from your storage or CDN
-        // This is just a placeholder
-        console.log("Deleting image:", filename);
+      // Optionally, handle image uploads separately if req.files exists
+      // Assuming you have a field named 'images' in your form
+      if (req.files && req.files.length > 0) {
+        const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
+        updatedJournal.images.push(...imgs);
       }
-      // Update the journal entry to remove the deleted images
-      await updatedJournal.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } });
+      await updatedJournal.save()
+      // Handle image deletion if req.body.deleteImages is present
+      if (req.body.deleteImages) {
+        for (let filename of req.body.deleteImages) {
+          // Delete the image from your storage or CDN
+          // This is just a placeholder
+          console.log("Deleting image:", filename);
+        }
+        // Update the journal entry to remove the deleted images
+        await updatedJournal.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } });
+      }
+      
+    
+      req.flash("success", "Journal entry updated successfully");
+      res.redirect(`/journals/${id}`);
+    } catch (err) {
+      console.error(err);
+      req.flash("error", "Failed to update journal entry");
+      res.redirect(`/journals/${req.params.id}/edit`);
     }
-    await updatedJournal.save()
-    req.flash("success", "Journal entry updated successfully");
-    res.redirect(`/journals/${id}`);
-  } catch (err) {
-    console.error(err);
-    req.flash("error", "Failed to update journal entry");
-    res.redirect(`/journals/${req.params.id}/edit`);
-  }
-});
+  });
 
 
 // module.exports.updateCampground = async (req, res) => {

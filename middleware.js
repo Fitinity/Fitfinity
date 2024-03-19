@@ -1,5 +1,6 @@
 const { JournalEntry } = require("./models/journal");
 const { Review } = require("./models/review");
+const { Gym } = require("./models/gym");
 
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
@@ -15,12 +16,21 @@ module.exports.storeReturnTo = (req, res, next) => {
   }
   next();
 };
-module.exports.isAuthor = async (req, res, next) => {
+module.exports.isJournalAuthor = async (req, res, next) => {
   const { id } = req.params;
   const journal = await JournalEntry.findById(id);
   console.log(journal)
   if(!journal.author.equals(req.user._id)){
     return res.redirect(`/journals/${journal._id}`)
+  }
+  next();
+};
+module.exports.isGymAuthor = async (req, res, next) => {
+  const { id } = req.params;
+  const gym = await Gym.findById(id);
+  console.log(gym)
+  if(!gym.author.equals(req.user._id)){
+    return res.redirect(`/gyms/${journal._id}`)
   }
   next();
 };

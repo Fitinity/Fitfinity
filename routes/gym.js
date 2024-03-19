@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const flash = require("connect-flash");
-const { isLoggedIn, setCurrentPage } = require("../middleware");
+const { isLoggedIn, setCurrentPage, isGymAuthor } = require("../middleware");
 const { Gym } = require("../models/gym");
 const multer = require("multer");
 const { storage } = require("../cloudinary/index");
@@ -9,6 +9,7 @@ const upload = multer({ storage });
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapBoxToken = process.env.MAPBOX_TOKEN;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+const { cloudinary } = require("../cloudinary");
 
 mbxGeocoding({ accessToken: mapBoxToken });
 
@@ -75,7 +76,7 @@ router.post(
 );
 
 // Show route - Display details of a specific gym
-router.get("/gyms/:id", setCurrentPage, isLoggedIn, async (req, res) => {
+router.get("/gyms/:id", setCurrentPage, isLoggedIn, isGymAuthor, async (req, res) => {
   try {
     const gym = await Gym.findById(req.params.id).populate({
       path: "reviews",
@@ -97,7 +98,7 @@ router.get("/gyms/:id", setCurrentPage, isLoggedIn, async (req, res) => {
 });
 
 // Edit route - Display form to edit a specific gym
-router.get("/gyms/:id/edit", setCurrentPage, isLoggedIn, async (req, res) => {
+router.get("/gyms/:id/edit", setCurrentPage, isLoggedIn, isGymAuthor, async (req, res) => {
   try {
     const gym = await Gym.findById(req.params.id);
     if (!gym) {
@@ -113,14 +114,46 @@ router.get("/gyms/:id/edit", setCurrentPage, isLoggedIn, async (req, res) => {
 });
 
 // Update route - Update a specific gym
-router.put("/gyms/:id", setCurrentPage, isLoggedIn, async (req, res) => {
+router.put("/gyms/:id", setCurrentPage, isLoggedIn, isGymAuthor, upload.array("images"), async (req, res) => {
   try {
     const { id } = req.params;
+    const {title, description, price, location} = req.body;
+    const geoData = await geocoder
+    .forwardGeocode({
+      query: req.body.location,
+      limit: 1,
+    })
+    .send();
+
     const gym = await Gym.findByIdAndUpdate(
       id,
-      { ...req.body.gym },
+      {geometry: geoData.body.features[0].geometry},
+
+      {title, description, price, location},
+
       { new: true }
     );
+
+    // Optionally, handle image uploads separately if req.files exists
+      // Assuming you have a field named 'images' in your form
+      if (req.files && req.files.length > 0) {
+        const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
+        gym.images.push(...imgs);
+      }
+
+      await gym.save()
+    // Handle image deletion if req.body.deleteImages is present
+    if (req.body.deleteImages) {
+      for (let filename of req.body.deleteImages) {
+        // Delete the image from your storage or CDN
+        // This is just a placeholder
+        console.log("Deleting image:", filename);
+        await cloudinary.uploader.destroy(filename);
+      }
+    }  
+    await gym.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } });
+    console.log(gym)
+
     req.flash("success", "Successfully updated the gym!");
     res.redirect(`/gyms/${gym._id}`);
   } catch (err) {
