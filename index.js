@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const { JournalEntry } = require("./models/journal");
 const { Gym } = require("./models/gym");
 const session = require("express-session");
-const methodOverride = require("method-override");
+const methodOverride = require('method-override')
 const gymRoutes = require("./routes/gym");
 const journalRoutes = require("./routes/journal");
 const userRoutes = require("./routes/users");
@@ -38,7 +38,7 @@ app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride("_method"));
+app.use(methodOverride('_method')); // to use put and delete methods on our forms
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "assets")));
 
@@ -91,12 +91,10 @@ app.get("/fakeUser", async (req, res) => {
 
 //-----------------------------------------------------------------------------------------------------------
 app.use((req, res, next) => {
-  console.log(req.session);
 
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.currentUser = req.user;
-  console.log(res.locals.currentUser);
   /*req.user is a property commonly used in web applications that implement authentication, especially when using middleware like Passport.js.
      It represents the currently authenticated user.
 

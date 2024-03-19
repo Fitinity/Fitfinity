@@ -15,13 +15,15 @@ module.exports.storeReturnTo = (req, res, next) => {
   }
   next();
 };
-// module.exports.isAuthor = async (req, res, next) => {
-//   const { id } = req.params;
-//   const review = await JournalEntry.findById(id);
-//   if(!review.authors.equal(req.user._id)){
-//     return res.
-//   }
-// };
+module.exports.isAuthor = async (req, res, next) => {
+  const { id } = req.params;
+  const journal = await JournalEntry.findById(id);
+  console.log(journal)
+  if(!journal.author.equals(req.user._id)){
+    return res.redirect(`/journals/${journal._id}`)
+  }
+  next();
+};
 module.exports.vaidateJournal = (req, res, next) => {
   const result = JournalEntry.validate(req.body);
   const { error } = result;

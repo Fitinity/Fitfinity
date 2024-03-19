@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-const { isLoggedIn, setGreeting, setCurrentPage } = require("../middleware");
+const { isLoggedIn, setGreeting, setCurrentPage ,isAuthor} = require("../middleware");
 const { JournalEntry } = require("../models/journal");
 const multer = require("multer");
 const { storage } = require("../cloudinary/index");
 const upload = multer({ storage });
+
 
 router.get("/journals", setCurrentPage, setGreeting, async (req, res) => {
   try {
@@ -41,6 +42,7 @@ router.post(
   async (req, res) => {
     try {
       const { title, content } = req.body;
+      console.dir(req.body)
       const images = req.files.map((file) => ({
         url: file.path,
         filename: file.filename,
@@ -77,45 +79,72 @@ router.get("/journals/:id", setCurrentPage, async (req, res) => {
   }
 });
 
-// Update Submission
-router.put("/journals/:id", isLoggedIn, async (req, res) => {
+
+// Update Route
+router.get("/journals/:id/edit",isLoggedIn,setCurrentPage,isAuthor, async (req, res) => {
   try {
-    const journalEntry = await JournalEntry.findById(req.params.id);
-    // Check if the logged-in user is the author of the journal entry
-    if (!journalEntry.author.equals(req.user._id)) {
-      req.flash("error", "You are not authorized to edit this journal entry");
-      return res.redirect(`/journals/${req.params.id}`);
-    }
-    // Update the journal entry
-    console.log("Heil");
-    console.log(req.body.title);
-    await JournalEntry.findByIdAndUpdate(req.params.id, {
-      title: req.body.title,
-      content: req.body.content,
-    });
-    req.flash("success", "Journal entry updated successfully");
-    res.redirect(`/journals`);
+    const journal = await JournalEntry.findById(req.params.id).populate('author');
+   res.render("journals/edit", { journal }); // Assuming your EJS file is named editJournalEntry.ejs
   } catch (err) {
+    console.error(err);
+    req.flash("error", "Failed to fetch journal entry for editing");
+    res.redirect("/journals");
+  }
+});
+
+
+router.put("/journals/:id",isLoggedIn, isAuthor,  upload.array("images"),
+ async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, content } = req.body; // Extract title and content from req.body
+    // Find the journal entry by ID and update only title and content fields
+    const updatedJournal = await JournalEntry.findByIdAndUpdate(id, { title, content }, { new: true });
+
+    // Optionally, handle image uploads separately if req.files exists
+    // Assuming you have a field named 'images' in your form
+    if (req.files && req.files.length > 0) {
+      const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
+      updatedJournal.images.push(...imgs);
+    }
+
+    // Handle image deletion if req.body.deleteImages is present
+    if (req.body.deleteImages) {
+      for (let filename of req.body.deleteImages) {
+        // Delete the image from your storage or CDN
+        // This is just a placeholder
+        console.log("Deleting image:", filename);
+      }
+      // Update the journal entry to remove the deleted images
+      await updatedJournal.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } });
+    }
+    await updatedJournal.save()
+    req.flash("success", "Journal entry updated successfully");
+    res.redirect(`/journals/${id}`);
+  } catch (err) {
+    console.error(err);
     req.flash("error", "Failed to update journal entry");
     res.redirect(`/journals/${req.params.id}/edit`);
   }
 });
 
-// Update Route
-router.get(
-  "/journals/:id/edit",
-  isLoggedIn,
-  setCurrentPage,
-  async (req, res) => {
-    try {
-      const journalEntry = await JournalEntry.findById(req.params.id).populate("user");
-      res.render("journals/edit", { journalEntry });
-    } catch (err) {
-      req.flash("error", "Failed to fetch journal entry for editing");
-      res.redirect("/journals");
-    }
-  }
-);
+
+// module.exports.updateCampground = async (req, res) => {
+//   const { id } = req.params;
+//   console.log(req.body);
+//   const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
+//   const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
+//   campground.images.push(...imgs);
+//   await campground.save();
+//   if (req.body.deleteImages) {
+//       for (let filename of req.body.deleteImages) {
+//           await cloudinary.uploader.destroy(filename);
+//       }
+//       await campground.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } })
+//   }
+//   req.flash('success', 'Successfully updated campground!');
+//   res.redirect(`/campgrounds/${campground._id}`)
+// }
 
 
 router.delete("/journals/:id", isLoggedIn, async (req, res) => {
