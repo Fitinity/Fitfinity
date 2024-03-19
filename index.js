@@ -10,6 +10,7 @@ const methodOverride = require("method-override");
 const gymRoutes = require("./routes/gym");
 const journalRoutes = require("./routes/journal");
 const userRoutes = require("./routes/users");
+const reviewRoutes = require("./routes/reviews");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 mongoose
@@ -39,6 +40,8 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "assets")));
+
 app.use(flash());
 
 //---------------------------------------------------------------------------------------------------------------
@@ -103,11 +106,15 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/", gymRoutes);
+app.get("/", setCurrentPage, (req, res) => {
+  res.render("home/home");
+});
 
+app.use("/", gymRoutes);
 app.use("/", journalRoutes);
 app.use("/", userRoutes);
-console.log("meow");
+app.use("/", reviewRoutes);
+
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = "Something went wrong";

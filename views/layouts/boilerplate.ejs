@@ -11,16 +11,19 @@
       crossorigin="anonymous"
     />
 
-    <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
     <link
-      href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css"
+      href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css"
       rel="stylesheet"
     />
+
+    <link rel="text/html" href="../home.css">
+   
   </head>
 
   <body class="d-flex flex-column vh-100">
     <%- include('../partials/navbar') %>
-    <main class="container mt-3">
+    <main class="container-fluid flex-grow-1 vw-100"> <!-- Added 'container-fluid' class and 'flex-grow-1' class -->
       <%- include('../partials/flash') %> <%-body %>
     </main>
     <%- include('../partials/footer') %>
@@ -35,22 +38,7 @@
       integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
       crossorigin="anonymous"
     ></script>
-    <script src="/javascripts/validateForms.js"></script>
-    <script>
-      // Get the current pathname from the URL
-      console.log("mewo");
-      const currentPath = window.location.pathname;
-      console.log(currentPath);
-      // Define a function to extract the page name from the pathname
-      function getPageName(path) {
-        // Remove leading slash and split the pathname by '/'
-        const parts = path.slice(1).split("/");
-        // Return the first part of the split path
-        return parts[0];
-      }
 
-      // Set the currentPage variable based on the page name
-      const currentPage = getPageName(currentPath);
-    </script>
+    <script src="/javascripts/validateForms.js"></script>
   </body>
 </html>
