@@ -18,6 +18,7 @@ module.exports.storeReturnTo = (req, res, next) => {
 };
 module.exports.isJournalAuthor = async (req, res, next) => {
   const { id } = req.params;
+  console.log(id)
   const journal = await JournalEntry.findById(id);
   console.log(journal)
   if(!journal.author.equals(req.user._id)){
