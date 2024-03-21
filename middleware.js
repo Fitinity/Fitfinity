@@ -1,6 +1,7 @@
 const { JournalEntry } = require("./models/journal");
 const { Review } = require("./models/review");
 const { Gym } = require("./models/gym");
+const { RecEntry } = require('./models/recs')
 
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
@@ -35,6 +36,16 @@ module.exports.isGymAuthor = async (req, res, next) => {
   }
   next();
 };
+module.exports.isRecAuthor = async (req, res, next) => {
+  const { id } = req.params;
+  const rec = await RecEntry.findById(id);
+  console.log(rec)
+  if(!rec.author.equals(req.user._id)){
+    return res.redirect(`/recs/${rec._id}`)
+  }
+  next();
+};
+// change the spelling
 module.exports.vaidateJournal = (req, res, next) => {
   const result = JournalEntry.validate(req.body);
   const { error } = result;

@@ -22,9 +22,10 @@ router.get("/journals", isLoggedIn, setCurrentPage, setGreeting, async (req, res
 //   res.send(req.body, req.file);
 // });
 
-// Add new Journal Entries
+// Show All Journal Entries
 router.get(
   "/journals/new",
+  isJournalAuthor,
   isLoggedIn,
   setCurrentPage,
   setGreeting,
