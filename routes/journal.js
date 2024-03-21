@@ -7,11 +7,10 @@ const multer = require("multer");
 const { storage } = require("../cloudinary/index");
 const upload = multer({ storage });
 
-
-router.get("/journals", setCurrentPage, setGreeting, async (req, res) => {
+// Index page
+router.get("/journals", isLoggedIn, setCurrentPage, setGreeting, async (req, res) => {
   try {
     const journals = await JournalEntry.find({});
-    console.log("meow");
     res.render("journals/index", { journals });
   } catch (err) {
     req.flash("error", "Failed to fetch journal entries");
@@ -23,7 +22,7 @@ router.get("/journals", setCurrentPage, setGreeting, async (req, res) => {
 //   res.send(req.body, req.file);
 // });
 
-// Show All Journal Entries
+// Add new Journal Entries
 router.get(
   "/journals/new",
   isLoggedIn,
@@ -69,7 +68,7 @@ router.post(
 );
 
 // Show page
-router.get("/journals/:id", setCurrentPage, async (req, res) => {
+router.get("/journals/:id", isJournalAuthor, isLoggedIn, setCurrentPage, async (req, res) => {
   try {
     const journalEntry = await JournalEntry.findById(req.params.id).populate('author');
     res.render("journals/show", { journalEntry });
