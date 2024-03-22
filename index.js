@@ -11,6 +11,7 @@ const gymRoutes = require("./routes/gym");
 const journalRoutes = require("./routes/journal");
 const userRoutes = require("./routes/users");
 const reviewRoutes = require("./routes/reviews");
+const recRoutes = require("./routes/rec")
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 mongoose
@@ -112,6 +113,7 @@ app.use("/", gymRoutes);
 app.use("/", journalRoutes);
 app.use("/", userRoutes);
 app.use("/", reviewRoutes);
+app.use("/", recRoutes);
 
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
