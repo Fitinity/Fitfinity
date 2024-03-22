@@ -20,7 +20,7 @@ module.exports.storeReturnTo = (req, res, next) => {
 module.exports.isJournalAuthor = async (req, res, next) => {
   const { id } = req.params;
   console.log(id)
-  const journal = await JournalEntry.findById(id);
+  const journal = await JournalEntry.findById(id).populate('author');
   console.log(journal)
   if(!journal.author.equals(req.user._id)){
     return res.redirect(`/journals/${journal._id}`)
