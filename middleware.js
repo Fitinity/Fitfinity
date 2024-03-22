@@ -31,8 +31,8 @@ module.exports.isGymAuthor = async (req, res, next) => {
   const { id } = req.params;
   const gym = await Gym.findById(id);
   console.log(gym)
-  if(!gym.author.equals(req.user._id)){
-    return res.redirect(`/gyms/${journal._id}`)
+  if(gym.author && !gym.author.equals(req.user._id)){
+    return res.redirect(`/gyms/${gym._id}`)
   }
   next();
 };
