@@ -25,7 +25,7 @@ body {
   font-family: "Poppins", sans-serif;
   margin: 0;
   padding: 0;
-  color: #f35e3e;
+  color: beige;
   background-color: #000000;
 }
 
@@ -86,6 +86,17 @@ body {
 }
 
 .details {
+  color: #f35e3e;
+  max-width: 800px;
+  margin: auto;
+  margin-top: 8rem;
+  font-size: 1.2rem;
+  line-height: 2rem;
+  text-align: center;
+}
+
+.details:hover {
+  color: beige;
   max-width: 800px;
   margin: auto;
   margin-top: 8rem;
@@ -101,6 +112,15 @@ body {
 }
 
 .learn__more {
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 5px;
+}
+.learn__more:hover {
+  background-color: #f35e3e;
   font-size: 1rem;
   font-weight: 600;
   outline: none;

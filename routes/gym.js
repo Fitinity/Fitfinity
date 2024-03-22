@@ -13,7 +13,7 @@ const { cloudinary } = require("../cloudinary");
 
 mbxGeocoding({ accessToken: mapBoxToken });
 
-router.get("/gyms", setCurrentPage, async (req, res) => {
+router.get("/gyms", setCurrentPage, isLoggedIn, async (req, res) => {
   try {
     const gyms = await Gym.find({});
     res.render("gym/index", { gyms });
@@ -76,7 +76,7 @@ router.post(
 );
 
 // Show route - Display details of a specific gym
-router.get("/gyms/:id", setCurrentPage, isLoggedIn, isGymAuthor, async (req, res) => {
+router.get("/gyms/:id", setCurrentPage, isLoggedIn, async (req, res) => {
   try {
     const gym = await Gym.findById(req.params.id).populate({
       path: "reviews",

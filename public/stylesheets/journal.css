@@ -37,3 +37,15 @@ body{
 
 
 }
+.add{
+    background-color : #f35e3e;
+    color: black;
+    border: 1px solid black;
+    font-weight: 600;
+}
+.add:hover{
+    background-color : beige;
+    color: black;
+    border: 1px solid black;
+    font-weight: 600;
+}
