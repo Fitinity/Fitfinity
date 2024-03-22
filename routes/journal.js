@@ -25,7 +25,6 @@ router.get("/journals", isLoggedIn, setCurrentPage, setGreeting, async (req, res
 // Show All Journal Entries
 router.get(
   "/journals/new",
-  isJournalAuthor,
   isLoggedIn,
   setCurrentPage,
   setGreeting,
