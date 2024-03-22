@@ -1,18 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;900&display=swap");
 
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
+
 html {
-  margin: 0;
+  margin: 100;
   padding: 0;
 }
 
 main {
-  margin: 0;
-  padding: 0;
+  margin: 100;
+  padding: 100;
 }
 
 
@@ -23,8 +19,8 @@ img {
 
 body {
   font-family: "Poppins", sans-serif;
-  margin: 0;
-  padding: 0;
+  margin: 100;
+  padding: 100;
   color: #f35e3e;
   background-color: #000000;
 }
@@ -108,3 +104,4 @@ body {
   padding: 0.75rem 1rem;
   border-radius: 5px;
 }
+
